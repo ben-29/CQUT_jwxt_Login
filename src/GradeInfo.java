@@ -17,8 +17,8 @@ public class GradeInfo {
 	@Override
 	public String toString() {
 		if(StringUtils.isNumeric(grade)) //成绩 为 数字
-			return stuYear + "\t" + stuPeriod + "\t" + grade + "\t\t"+ credit + "\t" + point + "\t" + className;
+			return stuYear + "\t" + stuPeriod + "\t" + grade + "\t\t"+ credit + "\t\t" + point + "\t" + className;
 		else
-			return stuYear + "\t" + stuPeriod + "\t" + grade + "\t"+ credit + "\t" + point + "\t" + className;
+			return stuYear + "\t" + stuPeriod + "\t" + grade + "\t"+ credit + "\t\t" + point + "\t" + className;
 	}
 }

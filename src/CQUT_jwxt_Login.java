@@ -36,13 +36,26 @@ public class CQUT_jwxt_Login {
         if(list != null){
             System.out.println("\t学年 学期\t成绩\t学分\t绩点\t课程名称");
             double sum = 0,avg_grade = 0,sum_credit = 0;
+            int fail = 0,max =0;
             for(GradeInfo i : list){
                 System.out.println(i);
+                int grade ;
+                double point = Double.parseDouble(i.point);
+                if(point == 0){
+                    grade = 0;
+                    fail += 1;
+                }
+                else{
+                    grade = (int) (point * 10 +50);
+                }
+                if(grade > max)
+                    max = grade;
+                sum += grade;
                 avg_grade += Double.parseDouble(i.credit) * Double.parseDouble(i.point);
                 sum_credit += Double.parseDouble(i.credit);
             }
-            int total = list.size();
-            System.out.println("课程总数: "+ total+ " 平均绩点"+ avg_grade/sum_credit);
+            int total = list.size()-fail;
+            System.out.printf("课程总数: %d 平均分: %.2f 平均绩点: %.2f 课程最高分: %d",total,sum/total,avg_grade/sum_credit,max);
         }
     }
     /*
