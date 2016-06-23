@@ -12,4 +12,4 @@
         *  username=学号
         *  password=密码
         *  _evenId=submit
-    * 成功 登录链接: /(b5nyljrkw4i0lmqvfrnyvn45)/xs_main.aspx?xh=`学号`&type=1
+    * 成功 登录链接: /(b5nyljrkw4i0lmqvfrnyvn45)/xs_main.aspx?xh= `学号`&type=1 
