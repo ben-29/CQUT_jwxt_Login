@@ -23,7 +23,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
-import java.io.IOException;
+import java.io.*;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,14 +31,17 @@ import java.util.List;
 public class CQUT_jwxt_Login {
     private static final String baseUri = "http://jwxt.i.cqut.edu.cn";
     private static final String loginUrl = "http://i.cqut.edu.cn/zfca/login?yhlx=student&login=0122579031373493728&url=xs_main.aspx";
+    private static final String FileName = "成绩.txt";
 
     public static  void showGrade(List<GradeInfo> list){
+        String outString = "";
+        String info = null;
         if(list != null){
-            System.out.println("\t学年 学期\t成绩\t学分\t绩点\t课程名称");
+            outString += "\t学年 学期\t成绩\t学分\t绩点\t课程名称\n";
             double sum = 0,avg_grade = 0,sum_credit = 0;
             int fail = 0,max =0;
             for(GradeInfo i : list){
-                System.out.println(i);
+                outString += i + "\n";
                 int grade ;
                 double point = Double.parseDouble(i.point);
                 if(point == 0){
@@ -55,8 +58,19 @@ public class CQUT_jwxt_Login {
                 sum_credit += Double.parseDouble(i.credit);
             }
             int total = list.size()-fail;
-            System.out.printf("课程总数: %d 平均分: %.2f 平均绩点: %.2f 课程最高分: %d",total,sum/total,avg_grade/sum_credit,max);
+            info = String.format("课程总数: %d 挂科数: %d\n平均分: %.2f 平均绩点: %.2f 课程最高分: %d",total,fail,sum/total,avg_grade/sum_credit,max);
+            outString += info;
         }
+        File output = new File(FileName);
+        try {
+            FileOutputStream out = new FileOutputStream(output);
+            out.write(outString.getBytes());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+//        System.out.println(outString);
+        System.out.println("获取成功！成绩已保存到 "+FileName);
+        System.out.println(info);
     }
     /*
      * 获取成绩
@@ -85,8 +99,7 @@ public class CQUT_jwxt_Login {
                                 .attr("value");
                         List<NameValuePair> params = new ArrayList<NameValuePair>();
                         params.add(new BasicNameValuePair("__VIEWSTATE", views));
-                        params.add(new BasicNameValuePair("Button2", URLEncoder
-                                .encode("在校学习成绩查询", "gbk")));
+                        params.add(new BasicNameValuePair("Button2", URLEncoder.encode("在校学习成绩查询", "gbk")));
 
                         post = new HttpPost(target);
                         entity = new UrlEncodedFormEntity(params,ContentType.getOrDefault(entity).getCharset());
@@ -137,8 +150,8 @@ public class CQUT_jwxt_Login {
     }
     public static void main(String[] args) {
         //TODO 在此输入学号密码
-        String username = "11303010126";
-        String password = "ben_29";
+        String username = "";
+        String password = "";
         if (username.isEmpty() || password.isEmpty()) {
             System.out.println("请在函数入口输入学号和密码");
         } else {
@@ -201,6 +214,7 @@ public class CQUT_jwxt_Login {
                         String logUri = realRequest.getURI().toString();
                         if (logUri.contains(username)) {//success
                             System.out.println("登录成功 登录链接: " + baseUri + logUri);
+                            System.out.println("正在获取成绩数据...");
                             List<GradeInfo> list = getGrade(logUri,username);
                             showGrade(list);
                         } else {

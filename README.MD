@@ -13,3 +13,5 @@
         *  password=密码
         *  _evenId=submit
     * 成功 登录链接: /(b5nyljrkw4i0lmqvfrnyvn45)/xs_main.aspx?xh= `学号`&type=1 
+    
+* 增加 成绩查询 保存到文本文件
