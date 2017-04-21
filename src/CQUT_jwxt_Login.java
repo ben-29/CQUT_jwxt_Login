@@ -82,8 +82,10 @@ public class CQUT_jwxt_Login {
      */
     public static List<GradeInfo> getGrade(String logUri, String id) {
 //        String session = logUri.substring(logUri.indexOf('('),logUri.indexOf(')')+1);
-//        System.out.println(session);
-        String session = logUri.substring(26, 52);
+        // if using proxy logUri :
+        //String session = logUri.substring(26, 52);
+        // if directly: /(fajuxqvzphye3z55223c3ie5)/xs_main.aspx?xh=11303010126&type=1
+        String session = logUri.substring(1, 27);
         String target = baseUri + '/' + session + "/xscj_gc.aspx?xh=" + id + "&type=1";
         //String target = baseUri +'/'+ session + "/xscj_gc.aspx?xh=" + id + "&type=1";
         //String target = baseUri +'/'+ "(ai2k1wvpjvb5t045cgdg3j55)/xscj_gc.aspx.aspx?xh=11303010126&type=1";
@@ -92,28 +94,27 @@ public class CQUT_jwxt_Login {
         HttpResponse r;
         HttpContext httpContext = new BasicHttpContext();
 
-        HttpHost hproxy = new HttpHost("localhost", 8888);
+        //HttpHost hproxy = new HttpHost("localhost", 8888);
         CloseableHttpClient httpClient =
-                HttpClients.custom().setProxy(hproxy).build();
+                //HttpClients.custom().setProxy(hproxy).build();
+                HttpClients.custom().build();
         HttpGet get = null;
         HttpPost post = null;
         try {
             get = new HttpGet(target);
-            get.addHeader("Host", "jwxt.i.cqut.edu.cn");
-            // don't need this header
-            //get.addHeader("Connection","keep-alive");
-            get.addHeader("Upgrade-Insecure-Requests", "1");
-            get.addHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.81 Safari/537.36");
-            get.addHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8");
-
-            get.addHeader("DNT", "1");
-            get.addHeader("Accept-Encoding", "gzip, deflate, sdch");
-            get.addHeader("Accept-Language", "zh-CN,zh;q=0.8,en-US;q=0.6,en;q=0.4,zh-TW;q=0.2");
+            //get.addHeader("Host", "jwxt.i.cqut.edu.cn");
+            //// don't need this header
+            ////get.addHeader("Connection","keep-alive");
+            //get.addHeader("Upgrade-Insecure-Requests", "1");
+            //get.addHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.81 Safari/537.36");
+            //get.addHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8");
+            //get.addHeader("DNT", "1");
+            //get.addHeader("Accept-Encoding", "gzip, deflate, sdch");
+            //get.addHeader("Accept-Language", "zh-CN,zh;q=0.8,en-US;q=0.6,en;q=0.4,zh-TW;q=0.2");
 
             //get.addHeader("Cookie", "web-stu=20111164");
+            // the web-stu is not static
             get.addHeader("Cookie", cookie);
-            //get.addHeader("Refer", logUri);
-            //get.addHeader("Referer",logUri);
             r = httpClient.execute(get, httpContext);
             HttpEntity entity = r.getEntity();
             int statusCode = r.getStatusLine().getStatusCode();
@@ -130,24 +131,19 @@ public class CQUT_jwxt_Login {
                     params.add(new BasicNameValuePair("Button2", URLEncoder.encode("在校学习成绩查询", "gbk")));
 
                     post = new HttpPost(target);
-                    post.addHeader("Host", "jwxt.i.cqut.edu.cn");
-                    //get.addHeader("Connection","keep-alive");
-                    post.addHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.81 Safari/537.36");
-                    post.addHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8");
+                    //post.addHeader("Host", "jwxt.i.cqut.edu.cn");
+                    ////get.addHeader("Connection","keep-alive");
+                    //post.addHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.81 Safari/537.36");
+                    //post.addHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8");
+                    //post.addHeader("Accept-Encoding", "gzip, deflate, sdch");
+                    //post.addHeader("Accept-Language", "zh-CN,zh;q=0.8,en-US;q=0.6,en;q=0.4,zh-TW;q=0.2");
+                    post.addHeader("Cookie", cookie);
 
-                    post.addHeader("Accept-Encoding", "gzip, deflate, sdch");
-                    post.addHeader("Accept-Language", "zh-CN,zh;q=0.8,en-US;q=0.6,en;q=0.4,zh-TW;q=0.2");
-
-                    post.addHeader("Cookie", "web-stu=20111164");
-
-
-                    System.out.println(views);
+                    //System.out.println(views);
                     entity = new UrlEncodedFormEntity(params, ContentType.getOrDefault(entity).getCharset());
                     post.setEntity(entity);
                     r = httpClient.execute(post);
                     entity = r.getEntity();
-                    // System.out.println(r.getStatusLine()+"\n"+params.toString());
-                    //System.out.println(r.getStatusLine() + "\n");
                     statusCode = r.getStatusLine().getStatusCode();
                     System.out.println(statusCode);
                     if (statusCode == 200) {
@@ -205,15 +201,15 @@ public class CQUT_jwxt_Login {
             HttpContext httpContext = new BasicHttpContext();
             HttpHost hproxy = new HttpHost("localhost", 8888);
             CloseableHttpClient httpClient =//增加 302 自动跳转
-                    HttpClients.custom().setProxy(hproxy).setRedirectStrategy(new RedirectStrategy() {
+                    //HttpClients.custom().setProxy(hproxy).setRedirectStrategy(new RedirectStrategy() {
+                    HttpClients.custom().setRedirectStrategy(new RedirectStrategy() {
                         @Override
                         public boolean isRedirected(HttpRequest arg0, HttpResponse arg1,
                                                     HttpContext arg2) throws ProtocolException {
                             if (cookie == null) {
-
                                 org.apache.http.Header[] h = arg1.getAllHeaders();
                                 for (org.apache.http.Header i : h) {
-//                    System.out.println(i.getName() + " - " + i.getValue() + " - " + i.getElements());
+                                    // System.out.println(i.getName() + " - " + i.getValue() + " - " + i.getElements());
                                     if (i.getName().equals("Set-Cookie")) {
                                         String temp = i.getValue();
                                         if (temp != null && temp.startsWith(("web-stu=")))
@@ -222,7 +218,6 @@ public class CQUT_jwxt_Login {
                                     }
                                 }
                             }
-                            System.out.println("---cookie :" + cookie);
                             return arg1.getStatusLine().getStatusCode() == 302;
                         }
 
@@ -241,20 +236,10 @@ public class CQUT_jwxt_Login {
                 response = httpClient.execute(get, httpContext);
                 int statusCode = response.getStatusLine().getStatusCode();
                 if (statusCode == 200) {
-                    org.apache.http.Header[] h = response.getAllHeaders();
-                    for (org.apache.http.Header i : h) {
-//                    System.out.println(i.getName() + " - " + i.getValue() + " - " + i.getElements());
-                        if (i.getName().equals("Set-Cookie")) {
-                            Cookie = i.getValue();
-                        }
-                    }
+                    Cookie = response.getFirstHeader("Set-Cookie").getValue();
                     //post = new HttpPost(loginUrl);
                     System.out.println(Cookie);
-                    System.out.println(Cookie.substring(11, 43));
                     post = new HttpPost("http://i.cqut.edu.cn/zfca/login;" + Cookie.substring(0, 43) + "?yhlx=student&login=0122579031373493728&url=xs_main.aspx");
-                    System.out.println("http://i.cqut.edu.cn/zfca/login;" + Cookie.substring(0, 43) + "?yhlx=student&login=0122579031373493728&url=xs_main.aspx");
-                    //增加cookie
-                    //post.addHeader("Cookie", Cookie);
                     //获取lt
                     HttpEntity entityhost = response.getEntity();
                     if (entityhost != null) {
@@ -281,7 +266,10 @@ public class CQUT_jwxt_Login {
                             System.out.println("登录成功 登录链接: " + logUri);
                             System.out.println("正在获取成绩数据...");
                             List<GradeInfo> list = getGrade(logUri, username);
-                            showGrade(list);
+                            if (list == null)
+                                System.out.println("获取成绩失败");
+                            else
+                                showGrade(list);
                         } else {
                             System.out.println("学号或密码错误");
                         }
